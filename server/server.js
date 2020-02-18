@@ -1,5 +1,9 @@
 require('./config/config')
+
 const express = require('express');
+const mongoose = require('mongoose');
+
+
 const app = express();
 
 const bodyParser = require('body-parser');
@@ -9,36 +13,24 @@ app.use(bodyParser.urlencoded({ extended: false }))
 //parse application/json
 app.use(bodyParser.json())
 
+//rutas
+app.use( require('./routes/usuario').app )
 
-app.get('/usuario', (req, res)=>{
-    res.end('Get usuario');
-})
+const conexion = async (db)=>{
+    await mongoose.connect( `${db}` , {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useFindAndModify: false,
+        useCreateIndex: true
+    })
 
-app.post('/usuario', (req,res)=>{
-    let body = req.body;
-    if (body.nombre === undefined){
-        res.status(400).json({
-            "error": true,
-            "resp": "El nombre es requerido"
-        })
+}
 
-        return;
-    }
-    res.json({
-        body
-    });
-})
+conexion(process.env.URLDB)
+        .then(resp => console.log('Base de datos ONLINE'))
+        .catch( err => console.log('Ocurrio un error',err))
 
-app.put('/usuario/:id', (req,res)=>{
-    let id = req.params.id
-    res.json({
-        id
-    });
-})
 
-app.delete('/usuario/:id', (req, res) => {
-    res.end('Delete Usuario');
-})
 
 app.listen(process.env.PORT , ()=>{
     console.log('Servidor en el puerto ', process.env.PORT);
