@@ -10,11 +10,12 @@ const bodyParser = require('body-parser');
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
+
 //parse application/json
 app.use(bodyParser.json())
 
-//rutas
-app.use( require('./routes/usuario').app )
+//Configuracion global de rutas
+app.use(require('./routes/index'))
 
 const conexion = async (db)=>{
     await mongoose.connect( `${db}` , {
